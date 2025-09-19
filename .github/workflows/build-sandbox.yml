@@ -3,7 +3,7 @@ name: Build and Push Monad Sandbox Image
 on:
   push:
     branches:
-      - 'main' # This is the branch that will trigger the build
+      - 'master' # This is the branch that will trigger the build
   workflow_dispatch: # This allows you to manually run it from the GitHub website
 
 jobs:
