@@ -33,6 +33,6 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./docker/Dockerfile # We are telling it which Dockerfile to use
+        file: ./docker/builder/Dockerfile # We are telling it which Dockerfile to use
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/monad-sandbox:latest
