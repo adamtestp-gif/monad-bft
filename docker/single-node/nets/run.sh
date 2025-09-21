@@ -10,7 +10,7 @@ usage() {
 mkdir -p logs
 
 output_dir="logs"
-monad_bft_root="../.."
+monad_bft_root=$(git rev-parse --show-toplevel)
 devnet_dir="$monad_bft_root/docker/devnet"
 rpc_dir="$monad_bft_root/docker/rpc"
 net_dir="$monad_bft_root/docker/single-node/nets"
