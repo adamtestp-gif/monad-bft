@@ -33,6 +33,6 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Master-Blueprint.Dockerfile
+        file: ./docker/devnet/Dockerfile
         push: true
         tags: ghcr.io/${{ github.repository_owner }}/monad-sandbox:latest
