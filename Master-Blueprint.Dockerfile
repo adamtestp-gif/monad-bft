@@ -1,11 +1,11 @@
-# Stage 1: The "Cloud Forge" Workshop V3 - Definitive Build
-# This version is robust and corrects all previous pathing and resource issues.
+# Stage 1: The "Cloud Forge" Workshop V4 - DIAGNOSTIC RUN
+# This version's sole purpose is to show us the ground truth of the file system.
 FROM ubuntu:22.04 AS builder
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install a more comprehensive list of build dependencies to ensure stability.
+# Install dependencies.
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -28,39 +28,24 @@ WORKDIR /usr/src/monad-ws
 # Copy all the source code into the workshop
 COPY . .
 
-# THIS IS THE CRITICAL PATH FIX:
-# Change directory into the actual source code location before building.
+# Change directory into the actual source code location.
 WORKDIR /usr/src/monad-ws/monad-bft
 
-# THIS IS THE CRITICAL BUILD FIX:
-# Run cmake and then run 'make' with a limited number of jobs (-j4) to prevent RAM exhaustion.
+# --- THIS IS THE CAMERA ---
+# List the contents of the current directory to see if CMakeLists.txt is here.
+# The build will FAIL after this, which is INTENTIONAL.
+RUN ls -laR
+
+# This is the original build command. We expect it to fail again, but after giving us the file list.
 RUN cmake -DCMAKE_BUILD_TYPE=Release . && \
     make -j4 monad
 
 # ---
 
-# Stage 2: The Final, Clean Product
+# Stage 2: The Final, Clean Product (Will not be reached in this run)
 FROM ubuntu:22.04
-
-# Avoid interactive prompts
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Install ONLY the runtime dependencies.
-RUN apt-get update && apt-get install -y \
-    libssl-dev \
-    libgmp-dev \
-    libbrotli-dev \
-    zlib1g-dev \
-    libunwind-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# THIS IS THE CRITICAL COPY FIX:
-# Copy the compiled program from the correct, nested build path in the workshop stage
-# and place it where it can be globally executed.
+RUN apt-get update && apt-get install -y libssl-dev libgmp-dev libbrotli-dev zlib1g-dev libunwind-dev && rm -rf /var/lib/apt/lists/*
 COPY --from=builder /usr/src/monad-ws/monad-bft/build/monad /usr/local/bin/monad
-
-# Expose the default RPC port
 EXPOSE 8545
-
-# The self-starting command for the node.
 CMD ["monad"]
